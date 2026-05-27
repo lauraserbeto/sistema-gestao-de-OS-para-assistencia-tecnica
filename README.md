@@ -38,36 +38,14 @@ Nesta primeira entrega, foi implementada a base da API: estrutura do projeto, ba
 
 ### Divisão de responsabilidades
 
-| Entrega | Responsável | Área | Status |
-| --- | --- | --- | --- |
-| Entrega 1 | **Sérgio** | Infraestrutura, autenticação e gestão de clientes | Concluída |
-| Entrega 2 |  | Core Engine - gestão de ordens de serviço | Pendente |
-| Entrega 3 |  | Controle de peças e históricos | Pendente |
-| Entrega 4 |  | Relatórios, testes e documentação final | Pendente |
+- Entrega 1: Laura Beatriz Silva Serbêto | Matríula: 2321107
+- Entrega 2: 
+- Entrega 3: 
+- Entrega 4: 
 
-### Checklist geral do projeto
+## Detalhamento da Entrega 1 - Infraestrutura, autenticação e clientes
 
-- [x] Definir tecnologia principal: FastAPI.
-- [x] Criar estrutura inicial do projeto.
-- [x] Configurar banco de dados e migrations.
-- [x] Implementar autenticação.
-- [x] Implementar controle de perfis.
-- [x] Implementar gestão de clientes.
-- [x] Integrar API externa para busca de endereço por CEP.
-- [ ] Implementar ordens de serviço.
-- [ ] Implementar regras de negócio de ordens de serviço.
-- [ ] Implementar controle de peças.
-- [ ] Implementar histórico de status da OS.
-- [ ] Implementar histórico de movimentação de estoque.
-- [ ] Implementar cálculo de tempo de atendimento.
-- [ ] Implementar endpoints de relatórios.
-- [ ] Implementar testes automatizados.
-- [ ] Finalizar documentação da API.
-- [ ] Revisar README final.
-
-## Entrega 1 - Infraestrutura, autenticação e clientes
-
-Responsável: **Sérgio**
+Responsável: Laura Beatriz Silva Serbêto
 
 ### O que estava previsto
 
@@ -80,61 +58,65 @@ Responsável: **Sérgio**
 - [x] Implementação de login.
 - [x] Implementação de logout.
 - [x] Criação de rotas protegidas.
-- [x] Criação de controle por perfil:
-  - `administrador`
-  - `tecnico`
-  - `atendente`
+- [x] Criação de controle por perfil:  'administrador', 'tecnico' e 'atendente'.
 - [x] CRUD de clientes.
 - [x] Busca de clientes por nome, CPF, e-mail ou telefone.
 - [x] Integração com ViaCEP para preencher endereço automaticamente pelo CEP.
 
 ### O que foi feito
 
-- [x] Criada a aplicação FastAPI em `app/main.py`.
-- [x] Criada a configuração centralizada em `app/core/config.py`.
-- [x] Criada a camada de banco em `app/database`.
-- [x] Criados os modelos `User`, `Client` e `RevokedToken`.
+- [x] Criada a aplicação FastAPI em 'app/main.py'.
+- [x] Criada a configuração centralizada em 'app/core/config.py'.
+- [x] Criada a camada de banco em 'app/database'.
+- [x] Criados os modelos 'User', 'Client' e 'RevokedToken'.
 - [x] Criadas migrations Alembic para usuários, clientes e tokens revogados.
 - [x] Criado seed com usuários iniciais para os três perfis.
 - [x] Implementado login com JWT.
 - [x] Implementado logout com blacklist de token no banco.
-- [x] Implementada rota `GET /api/v1/auth/me`.
-- [x] Implementada rota `POST /api/v1/auth/register` restrita a administrador.
-- [x] Implementadas dependências de segurança:
-  - `get_current_user`
-  - `require_roles(...)`
+- [x] Implementada rota 'GET /api/v1/auth/me'.
+- [x] Implementada rota 'POST /api/v1/auth/register' restrita a administrador.
+- [x] Implementadas dependências de segurança: 'get_current_user' e 'require_roles(...)'.
 - [x] Implementado CRUD completo de clientes.
 - [x] Implementada busca avançada de clientes.
 - [x] Implementada normalização de CPF, telefone, e-mail, UF e CEP.
 - [x] Implementada validação de duplicidade de CPF e e-mail.
 - [x] Implementada integração com ViaCEP no cadastro e atualização de cliente.
-- [x] Adicionado `.gitignore` para evitar envio de `venv`, `.env`, banco local e caches.
+- [x] Adicionado '.gitignore' para evitar envio de 'venv', '.env', banco local e caches.
 - [x] Validada a execução local com migrations, seed, login, logout, criação, busca e edição de cliente.
+
+## Detalhamento da Entrega 2 - Ordens de serviço
+[]
+
+## Detalhamento da Entrega 3 - Peças e históricos
+[]
+
+## Detalhamento da Entrega 4 - Relatórios, testes e documentação
+[]
 
 ## Arquitetura do projeto
 
 ```text
 app/
   core/
-    config.py          # Configurações da aplicação
-    security.py        # JWT e hash de senha
+    config.py          
+    security.py        
   database/
-    base.py            # Base declarativa do SQLAlchemy
-    session.py         # Engine, SessionLocal e get_db
-    seed.py            # Usuários iniciais
+    base.py            
+    session.py         
+    seed.py            
   dependencies/
-    auth.py            # Usuário autenticado e controle de perfis
+    auth.py            
   models/
-    user.py            # Modelo de usuários e perfis
-    client.py          # Modelo de clientes
-    revoked_token.py   # Tokens invalidados no logout
+    user.py            
+    client.py          
+    revoked_token.py   
   repositories/
     user_repository.py
     client_repository.py
     token_repository.py
   routers/
-    auth.py            # Rotas de autenticação
-    clients.py         # Rotas de clientes
+    auth.py            
+    clients.py         
   schemas/
     auth.py
     user.py
@@ -198,17 +180,13 @@ uvicorn app.main:app --reload
 A API ficará disponível em:
 
 - API: `http://127.0.0.1:8000`
-- Health check: `http://127.0.0.1:8000/health`
 - Swagger: `http://127.0.0.1:8000/docs`
-- OpenAPI JSON: `http://127.0.0.1:8000/openapi.json`
 
 ## Usuários seed
 
-| Perfil | E-mail | Senha |
-| --- | --- | --- |
-| administrador | `admin@assistencia.com` | `admin123` |
-| tecnico | `tecnico@assistencia.com` | `tecnico123` |
-| atendente | `atendente@assistencia.com` | `atendente123` |
+- administrador: admin@assistencia.com | senha: admin123
+- tecnico: tecnico@assistencia.com | senha: tecnico123
+- atendente: atendente@assistencia.com | senha: atendente123
 
 ## Autenticação
 
@@ -222,12 +200,8 @@ Endpoint:
 POST /api/v1/auth/login
 ```
 
-O login usa `OAuth2PasswordRequestForm`, portanto envie os campos como `form-data` ou pelo botão **Authorize** do Swagger:
-
-| Campo | Descrição |
-| --- | --- |
-| `username` | E-mail do usuário |
-| `password` | Senha do usuário |
+username = E-mail do usuário
+password = Senha do usuário
 
 Exemplo:
 
@@ -273,25 +247,21 @@ O logout registra o token atual na tabela `revoked_tokens`. Depois disso, o mesm
 
 ### Autenticação
 
-| Método | Endpoint | Proteção | Descrição |
-| --- | --- | --- | --- |
-| `POST` | `/api/v1/auth/login` | Pública | Autentica usuário e retorna JWT |
-| `POST` | `/api/v1/auth/logout` | Autenticada | Revoga o token atual |
-| `GET` | `/api/v1/auth/me` | Autenticada | Retorna usuário autenticado |
-| `POST` | `/api/v1/auth/register` | Administrador | Cadastra novo usuário |
+- `POST` -> `/api/v1/auth/login` = Autentica usuário e retorna JWT 
+- `POST` -> `/api/v1/auth/logout` = Revoga o token atual 
+- `GET` -> `/api/v1/auth/me` = Retorna usuário autenticado 
+- `POST` -> `/api/v1/auth/register` = Cadastra novo usuário 
 
 ### Clientes
 
 Rotas permitidas para `administrador` e `atendente`.
 
-| Método | Endpoint | Descrição |
-| --- | --- | --- |
-| `POST` | `/api/v1/clients` | Cadastra cliente |
-| `GET` | `/api/v1/clients` | Lista clientes |
-| `GET` | `/api/v1/clients?search=termo` | Busca por nome, CPF, e-mail ou telefone |
-| `GET` | `/api/v1/clients/{client_id}` | Detalha cliente |
-| `PUT` | `/api/v1/clients/{client_id}` | Atualiza cliente |
-| `DELETE` | `/api/v1/clients/{client_id}` | Remove cliente |
+- `POST` -> `/api/v1/clients` = Cadastra cliente
+- `GET` -> `/api/v1/clients` = Lista clientes
+- `GET` -> `/api/v1/clients?search=termo` = Busca por nome, CPF, e-mail ou telefone
+- `GET` -> `/api/v1/clients/{client_id}` = Detalha cliente
+- `PUT` -> `/api/v1/clients/{client_id}` = Atualiza cliente
+- `DELETE` -> `/api/v1/clients/{client_id}` = Remove cliente
 
 Exemplo de cadastro de cliente:
 
@@ -339,63 +309,5 @@ Comportamento implementado:
 - Retorna erro `404` quando o CEP não existe.
 - Retorna erro `502` quando a API externa está indisponível.
 
-## Orientações para as próximas entregas
 
-### Para a Entrega 2 - Ordens de serviço
 
-A Pessoa 2 pode criar as tabelas de ordens de serviço relacionando:
-
-- `clients.id` como cliente da OS.
-- `users.id` como técnico responsável.
-
-Para garantir que o técnico responsável realmente seja técnico, filtre usuários com:
-
-```text
-role = "tecnico"
-```
-
-Dependências de segurança reutilizáveis:
-
-```python
-from app.dependencies.auth import get_current_user, require_roles
-from app.models.user import UserRole
-```
-
-Exemplo de proteção por perfil:
-
-```python
-Depends(require_roles(UserRole.administrador, UserRole.atendente))
-```
-
-### Para a Entrega 3 - Peças e históricos
-
-Sugestão de continuidade:
-
-- Criar modelo de peças.
-- Criar modelo de movimentação de estoque.
-- Criar tabela associativa entre OS e peças utilizadas.
-- Registrar histórico automático quando o status da OS mudar.
-- Calcular tempo de atendimento quando a OS for concluída.
-
-### Para a Entrega 4 - Relatórios, testes e documentação
-
-Sugestão de continuidade:
-
-- Criar endpoints agregados para relatórios.
-- Criar pelo menos 2 testes automatizados.
-- Revisar Swagger.
-- Exportar coleção Postman ou Insomnia, se necessário.
-- Atualizar este README com as entregas finais.
-
-## Validações realizadas
-
-- [x] Aplicação importada sem erro.
-- [x] Migrations aplicadas até o `head`.
-- [x] Seeds executados.
-- [x] Login testado com usuário administrador.
-- [x] Rota `/api/v1/auth/me` testada com token.
-- [x] Logout testado com revogação real do token.
-- [x] Cadastro de cliente testado.
-- [x] Busca de cliente testada.
-- [x] Edição de cliente testada.
-- [x] Integração ViaCEP testada com CEP `01001000`.
