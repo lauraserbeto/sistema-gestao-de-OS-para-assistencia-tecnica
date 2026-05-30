@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.database.session import get_db
@@ -14,9 +14,9 @@ from app.services.estoque_service import EstoqueService
 router = APIRouter(
     prefix="/estoque",
     tags=["Estoque"],
-    #dependencies=[
-        #Depends(require_roles(UserRole.administrador,  UserRole.tecnico)),
-    #],
+    dependencies=[
+        Depends(require_roles(UserRole.administrador,  UserRole.tecnico)),
+    ],
 )
 
 

@@ -1,6 +1,9 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
+from app.dependencies.auth import require_roles
+from app.models.user import UserRole
+
 from app.database.session import get_db
 from app.repositories.movimentacao_estoque_repository import (
     MovimentacaoEstoqueRepository,
@@ -11,6 +14,9 @@ from app.schemas.movimentacao_estoque import MovimentacaoEstoqueResponse
 router = APIRouter(
     prefix="/movimentacoes-estoque",
     tags=["Movimentações de Estoque"],
+    dependencies=[
+        Depends(require_roles(UserRole.administrador, UserRole.tecnico)),
+    ],
 )
 
 

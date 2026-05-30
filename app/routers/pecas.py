@@ -11,9 +11,9 @@ from app.services.peca_service import PecaService
 router = APIRouter(
     prefix="/pecas",
     tags=["Peças"],
-    #dependencies=[
-        #Depends(require_roles(UserRole.administrador, #UserRole.tecnico)),
-    #],
+    dependencies=[
+        Depends(require_roles(UserRole.administrador, UserRole.tecnico)),
+    ],
 )
 
 
