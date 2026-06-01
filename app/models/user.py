@@ -1,10 +1,14 @@
 import enum
 from datetime import datetime, timezone
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Boolean, DateTime, Enum, Integer, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
+
+if TYPE_CHECKING:
+    from app.models.ordem_servico import OrdemServico
 
 
 class UserRole(str, enum.Enum):
@@ -36,4 +40,15 @@ class User(Base):
         nullable=False,
         default=lambda: datetime.now(timezone.utc),
         onupdate=lambda: datetime.now(timezone.utc),
+    )
+
+    ordens_como_tecnico: Mapped[list["OrdemServico"]] = relationship(
+        "OrdemServico",
+        back_populates="technician",
+        foreign_keys="OrdemServico.technician_id",
+    )
+    ordens_abertas: Mapped[list["OrdemServico"]] = relationship(
+        "OrdemServico",
+        back_populates="opened_by",
+        foreign_keys="OrdemServico.opened_by_id",
     )
