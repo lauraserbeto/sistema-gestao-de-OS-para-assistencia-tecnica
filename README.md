@@ -39,7 +39,7 @@ Nesta primeira entrega, foi implementada a base da API: estrutura do projeto, ba
 ### Divisão de responsabilidades
 
 - Entrega 1: Laura Beatriz Silva Serbêto | Matríula: 2321107
-- Entrega 2: 
+- Entrega 2: Vitor Martins Melo | Matrícula: 2320023
 - Entrega 3: 
 - Entrega 4: 
 
@@ -85,7 +85,103 @@ Responsável: Laura Beatriz Silva Serbêto
 - [x] Validada a execução local com migrations, seed, login, logout, criação, busca e edição de cliente.
 
 ## Detalhamento da Entrega 2 - Ordens de serviço
-[]
+
+Responsável: Vitor Martins Melo | Matrícula: 2320023
+
+### O que estava previsto
+
+- [x] Modelagem e migration da tabela de OS.
+- [x] Relacionamentos: Cliente x OS x Técnico.
+- [x] Abertura de OS.
+- [x] Atualização de status da OS.
+- [x] Atribuição de técnico.
+- [x] Encerramento de OS.
+- [x] Impedir conclusão de OS sem técnico responsável.
+- [x] Bloquear edição de OS já concluídas ou canceladas.
+- [x] Validar controle de prioridade (baixa, média, alta, urgente).
+- [x] Validar limite máximo de 5 ordens em andamento por técnico.
+- [x] Exigir e registrar motivo em caso de cancelamento.
+
+### O que foi feito
+
+- [x] Criado o modelo `OrdemServico` em `app/models/ordem_servico.py` com enums `OSStatus` e `OSPriority`.
+- [x] Adicionadas chaves estrangeiras para `clients.id`, `users.id` (técnico) e `users.id` (aberta por).
+- [x] Adicionados relacionamentos inversos nos modelos `User` e `Client`.
+- [x] Criada migration `202605310001_create_ordens_servico.py` encadeada na entrega anterior.
+- [x] Criado `app/repositories/os_repository.py` com listagem filtrada e contagem de OS ativas por técnico.
+- [x] Criado `app/services/os_service.py` com todas as regras de negócio.
+- [x] Criado `app/routers/ordens_servico.py` com 7 endpoints e controle de acesso por perfil.
+- [x] Criados schemas Pydantic em `app/schemas/ordem_servico.py`.
+- [x] Numeração automática das OS no formato `OS-{ANO}-{sequencial}`.
+- [x] Transição automática de status: `aberta` → `em_andamento` ao atribuir técnico.
+
+### Endpoints implementados
+
+#### Ordens de Serviço
+
+- `POST` → `/api/v1/os` = Abre nova OS (`administrador`, `atendente`)
+- `GET` → `/api/v1/os` = Lista OS com filtros opcionais (`todos`)
+- `GET` → `/api/v1/os/{os_id}` = Detalha OS (`todos`)
+- `PUT` → `/api/v1/os/{os_id}` = Edita OS aberta ou em andamento (`administrador`, `atendente`)
+- `PATCH` → `/api/v1/os/{os_id}/assign` = Atribui técnico (`administrador`, `atendente`)
+- `PATCH` → `/api/v1/os/{os_id}/close` = Conclui OS (`administrador`, `tecnico`)
+- `PATCH` → `/api/v1/os/{os_id}/cancel` = Cancela OS com motivo (`administrador`, `atendente`)
+
+#### Filtros disponíveis em `GET /api/v1/os`
+
+- `status` — `aberta`, `em_andamento`, `concluida`, `cancelada`
+- `priority` — `baixa`, `media`, `alta`, `urgente`
+- `client_id` — filtra por cliente
+- `technician_id` — filtra por técnico
+- `search` — busca por título ou número da OS
+- `skip` / `limit` — paginação
+
+#### Exemplo de abertura de OS
+
+```json
+{
+  "title": "Notebook não liga",
+  "description": "Cliente relata que o notebook não liga após queda.",
+  "priority": "alta",
+  "client_id": 1,
+  "technician_id": 2
+}
+```
+
+Resposta:
+
+```json
+{
+  "id": 1,
+  "numero": "OS-2026-000001",
+  "status": "em_andamento",
+  "priority": "alta",
+  "client": { "id": 1, "name": "Maria Souza", ... },
+  "technician": { "id": 2, "name": "Técnico", ... },
+  "opened_by": { "id": 3, "name": "Atendente", ... },
+  "assigned_at": "2026-05-31T...",
+  "closed_at": null,
+  "cancellation_reason": null
+}
+```
+
+#### Exemplo de cancelamento
+
+```json
+{
+  "cancellation_reason": "Cliente desistiu do conserto após orçamento."
+}
+```
+
+### Regras de negócio
+
+| Regra | Comportamento |
+|---|---|
+| Conclusão sem técnico | `409 Conflict` — OS precisa de técnico responsável |
+| Editar OS terminal | `409 Conflict` — bloqueado se `concluida` ou `cancelada` |
+| Técnico com 5 OS ativas | `409 Conflict` — limite máximo por técnico |
+| Cancelamento sem motivo | `422 Unprocessable` — campo obrigatório (mín. 5 chars) |
+| Prioridade inválida | `422 Unprocessable` — aceita apenas os 4 valores do enum |
 
 ## Detalhamento da Entrega 3 - Peças e históricos
 []
@@ -109,25 +205,33 @@ app/
   models/
     user.py            
     client.py          
-    revoked_token.py   
+    revoked_token.py
+    ordem_servico.py       ← Entrega 2
   repositories/
     user_repository.py
     client_repository.py
     token_repository.py
+    os_repository.py       ← Entrega 2
   routers/
     auth.py            
-    clients.py         
+    clients.py
+    ordens_servico.py      ← Entrega 2
   schemas/
     auth.py
     user.py
     client.py
+    ordem_servico.py       ← Entrega 2
   services/
     auth_service.py
     client_service.py
     viacep_service.py
+    os_service.py          ← Entrega 2
   main.py
 alembic/
   versions/
+    202605260001_create_users_clients.py
+    202605260002_create_revoked_tokens.py
+    202605310001_create_ordens_servico.py  ← Entrega 2
 ```
 
 A organização segue separação por responsabilidade:
