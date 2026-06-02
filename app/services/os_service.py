@@ -11,6 +11,12 @@ from app.repositories.os_repository import OSRepository
 from app.repositories.user_repository import UserRepository
 from app.schemas.ordem_servico import OSAssign, OSCancel, OSCreate, OSUpdate
 
+from app.models.ordem_servico_peca import OrdemServicoPeca
+from app.repositories.ordem_servico_peca_repository import OrdemServicoPecaRepository
+from app.repositories.peca_repository import PecaRepository
+from app.schemas.ordem_servico_peca import OrdemServicoPecaCreate
+from app.services.estoque_service import EstoqueService
+
 _MAX_ACTIVE_PER_TECH = 5
 _TERMINAL = {OSStatus.concluida, OSStatus.cancelada}
 
@@ -20,6 +26,9 @@ class OSService:
         self.repo = OSRepository(db)
         self.client_repo = ClientRepository(db)
         self.user_repo = UserRepository(db)
+        self.peca_repo = PecaRepository(db)
+        self.os_peca_repo = OrdemServicoPecaRepository(db)
+        self.estoque_service = EstoqueService(db)
 
     # ------------------------------------------------------------------ queries
 
@@ -138,6 +147,37 @@ class OSService:
             "status": OSStatus.cancelada,
             "cancellation_reason": payload.cancellation_reason,
         })
+    
+    def adicionar_peca(self, os_id: int, payload: OrdemServicoPecaCreate) -> OrdemServicoPeca:
+        os = self.get(os_id)
+        self._guard_terminal(os)
+
+        peca = self.peca_repo.get_by_id(payload.peca_id)
+        if not peca:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Peca nao encontrada",
+            )
+
+        if peca.quantidade_estoque < payload.quantidade:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Estoque insuficiente",
+            )
+
+        self.estoque_service.saida(
+            peca_id=payload.peca_id,
+            quantidade=payload.quantidade,
+            observacao=f"Utilizacao na OS {os.numero}",
+        )
+
+        item = OrdemServicoPeca(
+            ordem_servico_id=os.id,
+            peca_id=payload.peca_id,
+            quantidade=payload.quantidade,
+        )
+
+        return self.os_peca_repo.create(item)
 
     # ------------------------------------------------------------------ helpers
 

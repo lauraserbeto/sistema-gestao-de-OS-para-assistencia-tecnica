@@ -9,6 +9,7 @@ from app.models.ordem_servico import OSPriority, OSStatus
 from app.models.user import User, UserRole
 from app.schemas.ordem_servico import OSAssign, OSCancel, OSCreate, OSResponse, OSUpdate
 from app.services.os_service import OSService
+from app.schemas.ordem_servico_peca import OrdemServicoPecaCreate, OrdemServicoPecaResponse
 
 
 router = APIRouter(prefix="/os", tags=["Ordens de Servico"])
@@ -97,3 +98,16 @@ def close_os(os_id: int, db: Session = Depends(get_db)):
 )
 def cancel_os(os_id: int, payload: OSCancel, db: Session = Depends(get_db)):
     return OSService(db).cancel(os_id, payload)
+
+@router.post(
+    "/{os_id}/pecas",
+    response_model=OrdemServicoPecaResponse,
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(require_roles(UserRole.administrador, UserRole.tecnico))],
+)
+def adicionar_peca_os(
+    os_id: int,
+    payload: OrdemServicoPecaCreate,
+    db: Session = Depends(get_db),
+):
+    return OSService(db).adicionar_peca(os_id, payload)
