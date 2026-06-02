@@ -1,8 +1,15 @@
 from fastapi import FastAPI
 
 from app.core.config import settings
-from app.routers import auth, clients, estoque, movimentacoes_estoque, ordens_servico, pecas
-
+from app.routers import (
+    auth,
+    clients,
+    estoque,
+    movimentacoes_estoque,
+    ordens_servico,
+    pecas,
+    reports
+)
 
 app = FastAPI(
     title=settings.app_name,
@@ -17,6 +24,8 @@ app.include_router(pecas.router, prefix=settings.api_prefix)
 app.include_router(estoque.router, prefix=settings.api_prefix)
 app.include_router(movimentacoes_estoque.router, prefix=settings.api_prefix)
 
+# Relatórios (Pessoa 4)
+app.include_router(reports.router, prefix=settings.api_prefix)
 
 @app.get("/health", tags=["Health"])
 def health_check() -> dict[str, str]:

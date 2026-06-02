@@ -415,3 +415,24 @@ Comportamento implementado:
 
 
 
+## Relatórios
+
+GET /reports/orders-by-status
+
+Retorna quantidade de ordens agrupadas por status.
+
+GET /reports/late-orders
+
+Retorna ordens em atraso.
+
+GET /reports/top-technicians
+
+Retorna técnicos com maior número de atendimentos.
+
+GET /reports/most-used-parts
+
+Retorna peças mais utilizadas.
+
+GET /reports/average-service-time
+
+Retorna tempo médio de atendimento.
