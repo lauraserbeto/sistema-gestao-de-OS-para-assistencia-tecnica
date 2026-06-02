@@ -4,6 +4,7 @@ from app.models.ordem_servico import OrdemServico, OSPriority, OSStatus
 from app.models.peca import Peca
 from app.models.revoked_token import RevokedToken
 from app.models.user import User, UserRole
+from app.models.ordem_servico_peca import OrdemServicoPeca
 
 
 __all__ = [
@@ -16,4 +17,5 @@ __all__ = [
     "RevokedToken",
     "User",
     "UserRole",
+    "OrdemServicoPeca",
 ]
